@@ -1,6 +1,6 @@
 /**
- * Motion & Contact Trigger App - for use with Hues, Dimmers, and/or Switches
- *
+ * Motion & Contact Trigger App - for use with my "Scene Creation and Control App".
+ * Together, they create and control multiple Scenes (via Modes).
  *
 
  *  Version 1.0.0 (2015-1-7)
@@ -10,7 +10,7 @@
  *
  *  --------------------------------------------------------------------------
  *
- *  Copyright (c) 2014 Anthony Pastor
+ *  Copyright (c) 2015 Anthony Pastor
  *
  *  This program is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
