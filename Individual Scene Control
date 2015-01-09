@@ -1,11 +1,8 @@
 /**
- * Scene Creation & Control via Modes - for Hues, Dimmers, and/or Switches
+ * Individual Scene Creation & Control - for Hues, Dimmers, and/or Switches
+ * This App can be used separately from, or in conjunction with, my "Scene Creation 
  *
- *
- * Most of the logic used in this SmartApp was taken from "Dim & Dimmer" by geko@statusbits.com 
- * I just modified it to add Scene Control of Hue lights and, if Hues are selected, to enable selection of their color(s).
- * I run the setColor loop twice because I've found that not all of the Hues (I have about 15) will work in 1 go-around.
- *
+ * 
  *  Version 1.0.0 (2015-1-7)
  *
  *  The latest version of this file can be found at:
