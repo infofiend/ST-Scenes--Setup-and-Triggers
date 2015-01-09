@@ -1,5 +1,5 @@
 /**
- * Scene Creation & Control via Modes -- for use with my "Motion and Contact Trigger" App.
+ * Whole House Scene Creation & Control via Modes -- for use with my "Motion and Contact Trigger" App.
  * Together, they create and control multiple Scenes (via Modes) -- for Hues, Dimmers, and/or Switches.
  *
  * Most of the logic used in this SmartApp was taken from "Dim & Dimmer" by geko@statusbits.com 
