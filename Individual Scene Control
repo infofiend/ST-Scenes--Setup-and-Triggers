@@ -1,10 +1,10 @@
 definition(
     name: "Individual Scene Control",
-	namespace: "Aaptastic",
+    namespace: "Aaptastic",
     author: "Anthony Pastor",
     description: "This app sets lighting levels for a group of HUES, Dimmers, & Switches to specific colors / levels.",
     category: "Convenience",
-	  iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
+    iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
 )
 
