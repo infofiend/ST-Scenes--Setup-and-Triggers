@@ -1,4 +1,35 @@
-definition(
+/**
+ * Scene Creation & Control via Modes - for Hues, Dimmers, and/or Switches
+ *
+ *
+ * Most of the logic used in this SmartApp was taken from "Dim & Dimmer" by geko@statusbits.com 
+ * I just modified it to add Scene Control of Hue lights and, if Hues are selected, to enable selection of their color(s).
+ * I run the setColor loop twice because I've found that not all of the Hues (I have about 15) will work in 1 go-around.
+ *
+ *  Version 1.0.0 (2015-1-7)
+ *
+ *  The latest version of this file can be found at:
+ *  <TBD>
+ *
+ *  --------------------------------------------------------------------------
+ *
+ *  Copyright (c) 2015 Anthony Pastor
+ *
+ *  This program is free software: you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation, either version 3 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ *  for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+ definition(
     name: "Individual Scene Control",
     namespace: "Aaptastic",
     author: "Anthony Pastor",
