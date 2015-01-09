@@ -8,9 +8,9 @@ definition(
     author: "Anthony Pastor",
     description: "If my Selected (Virtual) Switch is True, then this SmartApp turns selected Dimming Lights (including Hues) ON to past level.  If no motion for X minutes, then turns selected Lights/Switches OFF -- Unless, the switch was already on prior to motion, in which case it stays on.  If the switch is toggled while the no-motion timer is running, the timer is canceled.",
     category: "Convenience",
-	  iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
+    iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
-}
+)
 
 preferences {
 	section("Select (Virtual) Presence Switch:"){
