@@ -1,6 +1,6 @@
 /**
- * Scene Creation & Control via Modes - for Hues, Dimmers, and/or Switches
- *
+ * Scene Creation & Control via Modes -- for use with my "Motion and Contact Trigger" App.
+ * Together, they create and control multiple Scenes (via Modes) -- for Hues, Dimmers, and/or Switches.
  *
  * Most of the logic used in this SmartApp was taken from "Dim & Dimmer" by geko@statusbits.com 
  * I just modified it to add Scene Control of Hue lights and, if Hues are selected, to enable selection of their color(s).
