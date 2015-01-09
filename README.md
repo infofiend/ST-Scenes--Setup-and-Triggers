@@ -22,6 +22,7 @@ Individual Scene Selection App - can be used in conjuction with above or used co
 
 - Again, I use virtual switches to identify whether certain family members are present (and thus whether motion/contact should trigger), but you could easily change that to run based on one or more Presence sensors.   
 
+-----
 
 Please let me know if you like/dislike, identify any bugs, or have any suggestions.  Thanks!!!
   
