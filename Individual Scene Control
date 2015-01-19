@@ -50,7 +50,7 @@ preferences {
 def mainPage() {
 	dynamicPage(name: "mainPage") {
 		section("Select (Virtual) Presence Switch:"){
-			input "someoneHome", "capability.button", multiple: false, required: true
+			input "someoneHome", "capability.switch", multiple: false, required: true
 		}
     	section("Select Triggers:"){
 			input "motions", "capability.motionSensor", title: "Motion Sensor(s)", multiple: true, required: false 
