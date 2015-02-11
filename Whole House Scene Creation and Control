@@ -9,11 +9,11 @@
  *  Version 1.1.0 (2015-2-11)
  *
  *  The latest version of this file can be found at:
- *  https://github.com/infofiend/Streamlined-Scene-Controls---SMARTTHINGS/edit/master/Whole%20House%20Scene%20Creation%20and%20Control
+ *  
  *
  *  --------------------------------------------------------------------------
  *
- *  Copyright (c) 2015 Anthony Pastor
+ *  Copyright (c) 2014 Anthony Pastor
  *
  *  This program is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -355,7 +355,7 @@ def resetLevel() {
         		}
 			}
 		}    
-	runIn (150, "pollMonitored") 	    
+	runIn (200, "pollMonitored") 	    
 }
  
  
@@ -365,12 +365,11 @@ def pollMonitored() {
     unschedule 
     
 	monitorThese.each() {
-    	if (it.currentValue("level") != null) {
-	       	def currentLevel = it.currentValue("level") 
-        
+    	def currentLevel = it.currentValue("level") as Integer
+        if (currentValue != null) {
     	    if ( currentLevel > 98 ) {    
 
-				log.info "pollMonitored: ${it.label} = ${it.currentValue} - must have been a user action at physical light switch, SO...."
+				log.info "pollMonitored: ${it.label} = ${currentValue} - must have been a user action at physical light switch, SO...."
         		log.info "pollMonitored: ... calling resetLevel."
 	            resetLevel()
 		
