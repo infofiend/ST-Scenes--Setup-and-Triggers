@@ -1,15 +1,15 @@
 /**
- * Whole House Scene Creation & Control via Modes -- for use with my "Motion and Contact Trigger" App.
- * Together, they create and control multiple Scenes (via Modes) -- for Hues, Dimmers, and/or Switches.
+ * AAP's Scene Creation - Hues, Dimmers, and/or Switches
  *
- * Most of the logic used in this SmartApp was taken from "Dim & Dimmer" by geko@statusbits.com 
+ *
+ * Most of the logic used in this App was taken from "Dim & Dimmer" by geko@statusbits.com 
  * I just modified it to add Scene Control of Hue lights and, if Hues are selected, to enable selection of their color(s).
- * I run the setColor loop twice because I've found that not all of the Hues (I have about 15) will work in 1 go-around.
  *
- *  Version 1.0.0 (2015-1-7)
+ *
+ *  Version 1.1.0 (2015-2-11)
  *
  *  The latest version of this file can be found at:
- *  <TBD>
+ *  https://github.com/infofiend/Streamlined-Scene-Controls---SMARTTHINGS/edit/master/Whole%20House%20Scene%20Creation%20and%20Control
  *
  *  --------------------------------------------------------------------------
  *
@@ -30,15 +30,15 @@
  */
 
 definition(
-    name: "Scene Creation and Control via Modes",
+    name: "AAP's Scene Creation - Hues, Dimmers, and/or Switches",
     namespace: "Aaptastic",
     author: "Anthony Pastor",
     description: "Create lighting scenes with Hues, Dimmers, and/or Switches.",
     category: "Convenience",
-	  iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
-    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
-    
-
+	iconUrl: "https://dl.dropboxusercontent.com/u/2403292/LR%20Scene.png",
+    iconX2Url: "https://dl.dropboxusercontent.com/u/2403292/LR%20Scene%20large.png",
+    oauth: true
+)
 
 preferences {
     page name:"pageSetup"
@@ -79,6 +79,14 @@ private def pageSetup() {
         multiple:   true,
         required:   false
     ]
+    
+    def inputMonitor = [
+        name        : "monitorThese",
+        type        : "capability.switchLevel",
+        title       : "Select Hues / Dimmers to monitor for physical override.",
+        multiple:   true,
+        required:   false
+    ]
 
     def pageProperties = [
         name        : "pageSetup",
@@ -93,6 +101,8 @@ private def pageSetup() {
             input inputHues
             input inputDimmers
             input inputSwitches
+            input inputMonitor
+            
             href "pageAbout", title:"About", description:"Tap to open"
         }
         section([title:"Options", mobileOnly:true]) {
@@ -134,7 +144,7 @@ private def pageConfigure() {
 
     def textAbout =
         "Set desired dimming levels for each home mode. Dimming values " +
-        "are between 0 (off) and 99 (full brightness). If left blank, the " +
+        "are between 0 (off) and 98 (almost full brightness). If left blank, the " +
         "dimming level will not change when switching to this mode."
 
     def pageProperties = [
@@ -176,6 +186,8 @@ def installed() {
 
     state.installed = true
     initialize()
+    
+	
 }
 
 def updated() {
@@ -189,134 +201,198 @@ def updated() {
 def onLocation(evt) {
     TRACE("onLocation(${evt.value})")
 
-    String mode = evt.value
+	state.currentMode = evt.value
+    String mode = state.currentMode
 
-    def allSwitches = []
-    if (settings.hues)
-        allSwitches.addAll(settings.hues)
-	if (settings.dimmers)
-        allSwitches.addAll(settings.dimmers)
-    if (settings.switches)
-        allSwitches.addAll(settings.switches)
+	if (state.lastMode != state.currentMode) {
+    
+	    def allSwitches = []
+    	if (settings.hues)
+        	allSwitches.addAll(settings.hues)
+		if (settings.dimmers)
+    	    allSwitches.addAll(settings.dimmers)
+	    if (settings.switches)
+    	    allSwitches.addAll(settings.switches)
 
-    allSwitches.each() {
-        def nameColor = "${it.id}_${mode.tr(' !+', '___')}_color"
-        TRACE("name: ${nameColor}")
-        def valueColor = settings[nameColor]
-        TRACE("value: ${valueColor}")
-        if (valueColor != null) {
-			if (valueColor == "Blue") {
-            	it.setColor([hue: 70, saturation:100])
-            } else if (valueColor == "Normal") {
-            	it.setColor([hue: 52, saturation:19])
-            } else if (valueColor == "Daylight") {
-            	it.setColor([hue: 53, saturation:91])
-            } else if (valueColor == "Soft") {
-            	it.setColor([hue: 23, saturation:56])
-            } else if (valueColor == "Warm") {
-            	it.setColor([hue: 20, saturation:80])
-            } else if (valueColor == "Red") {
-            	it.setColor([hue: 100, saturation:100])
-            } else if (valueColor == "Green") {
-            	it.setColor([hue: 39, saturation:100])
-            } else if (valueColor == "Yellow") {
-            	it.setColor([hue: 25, saturation:100])
-            } else if (valueColor == "Orange") {
-            	it.setColor([hue: 10, saturation:100])
-            } else if (valueColor == "Pink") {
-            	it.setColor([hue: 83, saturation:100])
-            } else if (valueColor == "Purple") {
-            	it.setColor([hue: 75, saturation:100])
-            }      
-                        
-        }    
-        
-        def name = "${it.id}_${mode.tr(' !+', '___')}"
-        TRACE("name: ${name}")
-        def value = settings[name]
-        TRACE("value: ${value}")
-        if (value != null) {
-            if (value == 'on') {
-                TRACE("Turning '${it.displayName}' on")
-                it.on()
-            } else if (value == 'off') {
-                TRACE("Turning '${it.displayName}' off")
-                it.off()
-   
+		def counter = 0
+	    allSwitches.each() {
+        	counter = counter + 1
+            if ( counter > 14 ) {
+            
+            	delay ( 5000 )
+            	counter = 0
+            
             } else {
-                value = value.toInteger()
-                if (value > 99) value = 99
-                TRACE("Setting '${it.displayName}' level to ${value}")
-                it.setLevel(value)
-            }
-        }
-    }
-
-	allSwitches.each() {
-        def nameColor = "${it.id}_${mode.tr(' !+', '___')}_color"
-        TRACE("name: ${nameColor}")
-        def valueColor = settings[nameColor]
-        TRACE("value: ${valueColor}")
-        if (valueColor != null) {
-			if (valueColor == "Blue") {
-            	it.setColor([hue: 70, saturation:100])
-            } else if (valueColor == "Normal") {
-            	it.setColor([hue: 52, saturation:19])
-            } else if (valueColor == "Daylight") {
-            	it.setColor([hue: 53, saturation:91])
-            } else if (valueColor == "Soft") {
-            	it.setColor([hue: 23, saturation:56])
-            } else if (valueColor == "Warm") {
-            	it.setColor([hue: 20, saturation:80])
-            } else if (valueColor == "Red") {
-            	it.setColor([hue: 100, saturation:100])
-            } else if (valueColor == "Green") {
-            	it.setColor([hue: 39, saturation:100])
-            } else if (valueColor == "Yellow") {
-            	it.setColor([hue: 25, saturation:100])
-            } else if (valueColor == "Orange") {
-            	it.setColor([hue: 10, saturation:100])
-            } else if (valueColor == "Pink") {
-            	it.setColor([hue: 83, saturation:100])
-            } else if (valueColor == "Purple") {
-            	it.setColor([hue: 75, saturation:100])
-            }      
-                        
-        }    
+            
+	    	    def nameColor = "${it.id}_${mode.tr(' !+', '___')}_color"
+    	    	TRACE("name: ${nameColor}")
+	    	    def valueColor = settings[nameColor]
+    	    	TRACE("value: ${valueColor}")
+	        	if (valueColor != null) {
+					if (valueColor == "Blue") {
+        	    		it.setColor([hue: 70, saturation:100])
+	        	    } else if (valueColor == "Normal") {
+    	        		it.setColor([hue: 52, saturation:19])
+	        	    } else if (valueColor == "Daylight") {
+    	        		it.setColor([hue: 53, saturation:91])
+	    	        } else if (valueColor == "Soft") {
+    	    	    	it.setColor([hue: 23, saturation:56])
+        	    	} else if (valueColor == "Warm") {
+	            		it.setColor([hue: 20, saturation:80])
+		            } else if (valueColor == "Red") {
+    		        	it.setColor([hue: 100, saturation:100])
+        		    } else if (valueColor == "Green") {
+            			it.setColor([hue: 39, saturation:100])
+		            } else if (valueColor == "Yellow") {
+    		        	it.setColor([hue: 25, saturation:100])
+        		    } else if (valueColor == "Orange") {
+            			it.setColor([hue: 10, saturation:100])
+	            	} else if (valueColor == "Pink") {
+   	        			it.setColor([hue: 83, saturation:100])
+	        	    } else if (valueColor == "Purple") {
+    	        		it.setColor([hue: 75, saturation:100])
+	    	        }      
+            	            
+	    	    }    
         
-        def name = "${it.id}_${mode.tr(' !+', '___')}"
-        TRACE("name: ${name}")
-        def value = settings[name]
-        TRACE("value: ${value}")
-        if (value != null) {
-            if (value == 'on') {
-                TRACE("Turning '${it.displayName}' on")
-                it.on()
-            } else if (value == 'off') {
-                TRACE("Turning '${it.displayName}' off")
-                it.off()
-   
-            } else {
-                value = value.toInteger()
-                if (value > 99) value = 99
-                TRACE("Setting '${it.displayName}' level to ${value}")
-                it.setLevel(value)
-            }
-        }
-    }
+		        def name = "${it.id}_${mode.tr(' !+', '___')}"
+    		    TRACE("name: ${name}")
+        		def value = settings[name]
+		        TRACE("value: ${value}")
+    		    if (value != null) {
+        		    if (value == 'on') {
+            		    TRACE("Turning '${it.displayName}' on")
+                		it.on()
+		            } else if (value == 'off') {
+    		            TRACE("Turning '${it.displayName}' off")
+        		        it.off()
+   	
+    	        	} else {
+        	        	value = value.toInteger()
+	            	    if (value > 99) value = 98
+    	            	TRACE("Setting '${it.displayName}' level to ${value}")
+	    	            it.setLevel(value)
+    	    	    }
+	        	}	
+		    }
+            
+		}
+	}
+    
+    state.lastMode = state.currentMode
 
+}
+
+def newLevelCheck(evt) {
+	log.info "newLevel: $evt.name: $evt.value"
+	state.changeValue = evt.value as Integer
+
+	if(state.changeValue > 98 ) {
+    	log.info "newLevelCheck: Found a level > 98 - must have been a user action at physical light switch, SO...."
+        log.info "newLevelCheck: ...calling resetLevel."
+	
+    unschedule
+   	resetLevel()
+    }
+}
+
+def resetLevel() {
+
+        String mode = state.currentMode
+        
+	    if (settings.hues) {
+	        
+            
+    	    hues.each() {
+       			def nameColor = "${it.id}_${mode.tr(' !+', '___')}_color"
+	        	TRACE("name: ${nameColor}")
+	    	    def valueColor = settings[nameColor]
+    	    	TRACE("value: ${valueColor}")
+	    	    if (valueColor != null) {
+					if (valueColor == "Blue") {
+        	    		it.setColor([hue: 70, saturation:100])
+	            	} else if (valueColor == "Normal") {
+    	        		it.setColor([hue: 52, saturation:19])
+	    	        } else if (valueColor == "Daylight") {
+    	    	    	it.setColor([hue: 53, saturation:91])
+        	    	} else if (valueColor == "Soft") {
+            			it.setColor([hue: 23, saturation:56])
+		            } else if (valueColor == "Warm") {
+    		        	it.setColor([hue: 20, saturation:80])
+        		    } else if (valueColor == "Red") {
+            			it.setColor([hue: 100, saturation:100])
+	            	} else if (valueColor == "Green") {
+    	        		it.setColor([hue: 39, saturation:100])
+	        	    } else if (valueColor == "Yellow") {
+    	        		it.setColor([hue: 25, saturation:100])
+	    	        } else if (valueColor == "Orange") {
+    	    	    	it.setColor([hue: 10, saturation:100])
+        	    	} else if (valueColor == "Pink") {
+            			it.setColor([hue: 83, saturation:100])
+		            } else if (valueColor == "Purple") {
+    		        	it.setColor([hue: 75, saturation:100])
+        		    }      
+        		}                
+	        }
+            
+        }
+   		
+        if (settings.dimmers) {
+
+			dimmers.each() {			    
+
+				def name = "${it.id}_${mode.tr(' !+', '___')}"
+	    	    TRACE("name: ${name}")
+	        	def value = settings[name]
+	    	    TRACE("value: ${value}")
+    	    	
+                if (value != null) {
+	    	        value = value.toInteger()
+    	    	    if (value > 99) value = 98 {
+	    	    	    TRACE("Setting '${it.displayName}' level to ${value}")
+    	    	    	it.setLevel(value)
+        			}
+        		}
+			}
+		}    
+	runIn (150, "pollMonitored") 	    
+}
+ 
+ 
+def pollMonitored() {
+
+	log.debug "pollMonitored: Polling the Monitored lights"
+    unschedule 
+    
+	monitorThese.each() {
+    	if (it.currentValue("level") != null) {
+	       	def currentLevel = it.currentValue("level") 
+        
+    	    if ( currentLevel > 98 ) {    
+
+				log.info "pollMonitored: ${it.label} = ${it.currentValue} - must have been a user action at physical light switch, SO...."
+        		log.info "pollMonitored: ... calling resetLevel."
+	            resetLevel()
+		
+    		}
+	    }
+	}
 }
 
 private def initialize() {
     log.trace "${app.name}. ${textVersion()}. ${textCopyright()}"
 
     subscribe(location, onLocation)
+    subscribe(monitorThese, "level", newLevelCheck)
+
+	runIn (150, "pollMonitored") 
+    
     STATE()
 }
 
 
 private def textVersion() {
-    def text = "Version 1.0.0"
+    def text = "Version 1.1.0"
 }
 
 private def textCopyright() {
