@@ -1,4 +1,5 @@
-# SMARTTHINGS Scenes Setup & Triggers (using virtual presence)
+# SMARTTHINGS Scenes Setup & Triggers 
+#    (using virtual presence)
 
 I currently have 9 modes.  4 modes are "automatic", and are run based on time of day or sunset/sunrise (Sleepytime, Morning, Day, and Night).  The other 5 modes are used when I invoke them manually (Dinner, BabySitting, Late, Movies, Vacation).  As I discuss below, I don't set up Home/Away modes - instead rely on virtual switches to check if certain family members are present.
 
